@@ -14,6 +14,7 @@ logger.setLevel(logging.INFO)
 nudir = lambda mod: [x for x in dir(mod) if not x.startswith("_")]
 app = Flask(__name__)
 
+
 @app.route("/")
 def index():
     if session and "userid" in session:
@@ -21,11 +22,12 @@ def index():
     else:
         return redirect("/static/login.html")
 
+
 @app.route("/login")
 def login():
     domain = parser["todolist"]["domain"]
     secrets_file = "client_secret.json"
-    scope =  "https://www.googleapis.com/auth/userinfo.email"
+    scope = "https://www.googleapis.com/auth/userinfo.email"
     redirect_uri = "http://{}/login".format(domain)
     login_handler = LoginHandler(secrets_file, scope, redirect_uri)
 
@@ -36,6 +38,7 @@ def login():
         return redirect("/static/main.html")
     else:
         return redirect(login_handler.auth_url)
+
 
 @app.route("/userinfo")
 def get_user_info():
@@ -49,7 +52,5 @@ def get_user_info():
         return jsonify(dict(email="error", display_name="Could not get info for this user"))
 
 if __name__ == '__main__':
-
-
     app.secret_key = parser["todolist"]["session_key"]
     app.run(debug=True)
