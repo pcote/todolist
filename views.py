@@ -1,9 +1,7 @@
 from flask import Flask, session, request, redirect, jsonify
 from configparser import ConfigParser
-from oauth2client import client
-import httplib2
-from apiclient import discovery
 import logging
+from login import LoginHandler
 
 parser = ConfigParser()
 parser.read("config.ini")
@@ -29,21 +27,15 @@ def login():
     secrets_file = "client_secret.json"
     scope =  "https://www.googleapis.com/auth/userinfo.email"
     redirect_uri = "http://{}/login".format(domain)
-    flow = client.flow_from_clientsecrets(secrets_file, scope=scope, redirect_uri=redirect_uri)
+    login_handler = LoginHandler(secrets_file, scope, redirect_uri)
 
     if "code" in request.args:
-        creds = flow.step2_exchange(request.args["code"])
-        http_auth = creds.authorize(httplib2.Http())
-        service = discovery.build("plus", "v1", http_auth)
-        res = service.people().get(userId="me").execute()
-        email = res.get("emails")[0].get("value")
-        display_name = res.get("displayName")
-        session["email"] = email
-        session["display_name"] = display_name
+        login_handler.setup_user_info(request.args["code"])
+        session["email"] = login_handler.email
+        session["display_name"] = login_handler.display_name
         return redirect("/static/main.html")
     else:
-        auth_url = flow.step1_get_authorize_url()
-        return redirect(auth_url)
+        return redirect(login_handler.auth_url)
 
 @app.route("/userinfo")
 def get_user_info():
