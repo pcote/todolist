@@ -60,9 +60,14 @@ def add_todo(email, todo_description):
 
 
 def get_user_todo_list(email):
+
+    if not email:
+        raise Exception("get_user_todo_list requires an email address and was not passed one.")
+
     sess = Session()
-    user = sess.query(User).filter_by(email=email).one()
-    todo_list = user.todo_list
+    user = sess.query(User).filter_by(email=email).one_or_none()
+    todo_list = user.todo_list if user else []
+
     return [dict(id=todo.id, description=todo.description)
             for todo in todo_list
             if todo.completed == 0]
@@ -74,7 +79,6 @@ def declare_item_done(item_id):
     item.completed = 1
     sess.commit()
 
+
 if __name__ == '__main__':
-    declare_item_done(1)
-    todo_list = get_user_todo_list("cotejrp@gmail.com")
-    print(todo_list)
+    email = "cotejrp@gmail.com"
