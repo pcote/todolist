@@ -27,6 +27,22 @@ var controller = function($scope, $http, $log){
         }, function(res){})
     }
 
+    $scope.add_todo_click = function(new_todo){
+        var req= {
+            url:"/addtodo",
+            method:"post",
+            headers:{
+                "Content-type":"application/json"
+            },
+            data:{"description":new_todo}
+        }
+
+        $http(req).then(function(res){
+            $scope.todo_list = res.data.todo_list
+        },
+        function(res){})
+    }
+
 }
 
 app = angular.module("app", [])

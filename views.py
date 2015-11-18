@@ -72,6 +72,15 @@ def completed_item():
     return jsonify(dict(todo_list=todo_list))
 
 
+@app.route("/addtodo", methods=["POST"])
+def add_todo():
+    json_data= request.get_json()
+    description = json_data.get("description")
+    models.add_todo(session["email"], description)
+    todo_list = models.get_user_todo_list(session["email"])
+    return jsonify(dict(todo_list=todo_list))
+
+
 if __name__ == '__main__':
     app.secret_key = parser["todolist"]["session_key"]
     app.run(debug=True)

@@ -24,6 +24,12 @@
                     <td>{{todo.description}}</td>
                     <td><button class="btn btn-primary" ng-click="done_click(todo.id)">Done</button></td>
                 </tr>
+                <tr>
+                    <td>
+                        <input type="text" size=80 ng-model="new_todo" class="input" />
+                        <button class="btn" ng-click="add_todo_click(new_todo)">Add</button>
+                    </td>
+                </tr>
             </table>
         </div>
     </div>
