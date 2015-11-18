@@ -2,6 +2,8 @@ from flask import Flask, session, request, redirect, jsonify
 from configparser import ConfigParser
 import logging
 from login import LoginHandler
+import models
+
 
 parser = ConfigParser()
 parser.read("config.ini")
@@ -50,6 +52,14 @@ def get_user_info():
         return jsonify(data)
     else:
         return jsonify(dict(email="error", display_name="Could not get info for this user"))
+
+
+@app.route("/todolist")
+def get_todo_list():
+    email = session.get("email")
+    todo_list = models.get_user_todo_list(email)
+    return jsonify(dict(todo_list=todo_list))
+
 
 if __name__ == '__main__':
     app.secret_key = parser["todolist"]["session_key"]

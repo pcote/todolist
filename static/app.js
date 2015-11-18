@@ -5,6 +5,13 @@ var controller = function($scope, $http, $log){
     },
     function(res){
     })
+
+    // get the user todo list.
+    $http.get("/todolist").then(function(res){
+        $scope.todo_list = res.data.todo_list
+    }, function(res){})
+
+
 }
 
 app = angular.module("app", [])
