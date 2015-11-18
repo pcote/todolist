@@ -22,7 +22,7 @@
             <table class="table">
                 <tr ng-repeat="todo in todo_list">
                     <td>{{todo.description}}</td>
-                    <td><button class="btn btn-primary">Done</button></td>
+                    <td><button class="btn btn-primary" ng-click="done_click(todo.id)">Done</button></td>
                 </tr>
             </table>
         </div>

@@ -11,6 +11,21 @@ var controller = function($scope, $http, $log){
         $scope.todo_list = res.data.todo_list
     }, function(res){})
 
+    $scope.done_click = function(id){
+        var req = {
+            url: "/completed",
+            method: "put",
+            headers: {
+                "Content-type": "application/json"
+            },
+
+            data: {"item_id": id}
+        }
+
+        $http(req).then(function(res){
+            $scope.todo_list = res.data.todo_list
+        }, function(res){})
+    }
 
 }
 
