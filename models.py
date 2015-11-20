@@ -17,6 +17,10 @@ Base = declarative_base()
 
 
 class TodoItem(Base):
+    """
+    Model class for Todo Items.
+    """
+
     __tablename__ = "todo_items"
     id = Column(Integer, primary_key=True, autoincrement=True)
     description = Column(Text)
@@ -25,6 +29,9 @@ class TodoItem(Base):
 
 
 class User(Base):
+    """
+    Model class for users.
+    """
     __tablename__ = "users"
     email = Column(VARCHAR(254), primary_key=True)
     display_name = Column(Text)
@@ -37,6 +44,11 @@ Session = sessionmaker(bind=eng)
 
 
 def add_user(email, display_name):
+    """
+    Make a database entry in the users table for this user.
+    :param email: The email address that serves as the identifier for the user's account.
+    :param display_name: The full name of the user to be displayed in the head of the todo list main page.
+    """
     sess = Session()
     user = User(email=email, display_name=display_name)
     sess.add(user)
@@ -44,6 +56,11 @@ def add_user(email, display_name):
 
 
 def user_exists(email):
+    """
+    Verify that the user actually exists in the database.
+    :param email: The email identifier for the user in question.
+    :return: True if the user is there in the db.  False otherwise.
+    """
     sess = Session()
     result_count = sess.query(User).filter_by(email=email).count()
     if result_count > 0:
@@ -60,7 +77,12 @@ def add_todo(email, todo_description):
 
 
 def get_user_todo_list(email):
-
+    """
+    Find the user todo list associated for a specific user.
+    Note: Only the not-yet-done todo items get returned.
+    :param email: The email identifier used to look up the user's todo items.
+    :return: A list of todo items.
+    """
     if not email:
         raise Exception("get_user_todo_list requires an email address and was not passed one.")
 
@@ -74,6 +96,11 @@ def get_user_todo_list(email):
 
 
 def declare_item_done(item_id):
+    """
+    Mark a todo item as completed in the database.
+    :param item_id: The id of the item in question to be declared as done.
+    :return: Nothing.
+    """
     sess = Session()
     item = sess.query(TodoItem).filter_by(id=item_id).one()
     item.completed = 1
@@ -81,4 +108,4 @@ def declare_item_done(item_id):
 
 
 if __name__ == '__main__':
-    email = "cotejrp@gmail.com"
+    pass # place to stick email address if I need to do testing of this module.

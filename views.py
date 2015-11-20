@@ -27,6 +27,13 @@ def index():
 
 @app.route("/login")
 def login():
+    """
+    Log in the user to the system using Google oauth login.
+    Note: What gets done here depends on what phase of the login process we are in.
+    If this is the INITIAL PHASE, then send the user to the Google login.
+    If we are COMING BACK from a Google login, use the code to get the email and display name set up for the user.
+    :return: An appropriate redirect (depending on what step of the login process this is.
+    """
     domain = parser["todolist"]["domain"]
     secrets_file = "client_secret.json"
     scope = "https://www.googleapis.com/auth/userinfo.email"
@@ -44,6 +51,10 @@ def login():
 
 @app.route("/userinfo")
 def get_user_info():
+    """
+    Grab user info and send it back as json.
+    :return: Json data about the user or else an error message if the info isn't available.
+    """
     if session and session.get("email") and session.get("display_name"):
         email = session.get("email")
         display_name = session.get("display_name")
@@ -56,6 +67,10 @@ def get_user_info():
 
 @app.route("/todolist")
 def get_todo_list():
+    """
+    Get the todo list of not-yet-done todo items for a given user.
+    :return: JSON list of todo info.
+    """
     email = session.get("email")
     todo_list = models.get_user_todo_list(email)
     return jsonify(dict(todo_list=todo_list))
@@ -63,6 +78,10 @@ def get_todo_list():
 
 @app.route("/completed", methods=["PUT"])
 def completed_item():
+    """
+    Update to mark a JSON specified TODO item as completed.
+    :return: A refreshed TODO list for the user excluding the completed item.
+    """
     json_data = request.get_json()
     item_id = json_data.get("item_id")
     models.declare_item_done(item_id)
@@ -74,6 +93,10 @@ def completed_item():
 
 @app.route("/addtodo", methods=["POST"])
 def add_todo():
+    """
+    Add a todo item to the database.
+    :return: An updated todo item list including the newly added todo item.
+    """
     json_data= request.get_json()
     description = json_data.get("description")
     models.add_todo(session["email"], description)
